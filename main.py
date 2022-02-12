@@ -366,18 +366,19 @@ class App(QWidget):
 		self.table_widget = QTableWidget()
 		global num_stonks
 		self.table_widget.setRowCount(num_stonks)
-		self.table_widget.setColumnCount(10)
+		self.table_widget.setColumnCount(11)
 		self.table_widget.setHorizontalHeaderLabels(
-			["Bought Price",    #0
-			"Shares",           #1
-			"Gain Alert %",     #2
-			"Loss Alert %",     #3
-			"Price",            #4
-			"30m Ago",  #5
-			"Gain/Loss %",      #6
-			"Purchase Total",   #7
-			"Final Sale Value", #8
-			"Total Gain/Loss $"]#9
+			["Bought Price",            #0
+			"Shares",                   #1
+			"Gain Alert %",             #2
+			"Loss Alert %",             #3
+			"Price",                    #4
+			"30m Ago",                  #5
+			"Gain/Loss %",              #6
+			"Purchase Total",           #7
+			"Pre Tax Gain/Loss",        #8
+			"Taxed Gain/Loss",          #9
+			"Final Sale Value w/ Tax"]  #10
 		)
 		self.table_widget.move(0,0)
 		self.table_widget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
@@ -443,8 +444,9 @@ class App(QWidget):
 						self.table_widget.setItem(y, 4, QTableWidgetItem("$"+str(item["price"])))
 						self.table_widget.setItem(y, 5, QTableWidgetItem("$"+str(item["interval"]["m30"]["price"])))
 						tax_res = float(user_data["shares"][y]) * float(item["price"])
-						self.table_widget.setItem(y, 8, QTableWidgetItem("$"+str("{:,.2f}".format(tax_res * 0.999))))
+						self.table_widget.setItem(y, 8, QTableWidgetItem("$"+str("{:,.2f}".format((tax_res)-float(user_data["buy"][y])*float(user_data["shares"][y])))))
 						self.table_widget.setItem(y, 9, QTableWidgetItem("$"+str("{:,.2f}".format((tax_res * 0.999)-float(user_data["buy"][y])*float(user_data["shares"][y])))))
+						self.table_widget.setItem(y, 10, QTableWidgetItem("$"+str("{:,.2f}".format(tax_res * 0.999))))
 			if not self.no_notification and y == (num_stonks - 1):
 				if self.not_recently_notified:
 					# This silences notifications when starting TornStonks
@@ -513,8 +515,9 @@ class App(QWidget):
 						self.table_widget.setItem(row, 6, QTableWidgetItem(str("{:.2f}".format(perc)) + "%"))
 						self.table_widget.setItem(row, 7, QTableWidgetItem("$"+str("{:,.2f}".format(float(user_data["shares"][row]) * float(user_data["buy"][row])))))
 						tax_res = float(user_data["shares"][row]) * curr_price
-						self.table_widget.setItem(row, 8, QTableWidgetItem("$"+str("{:,.2f}".format(tax_res * 0.999))))
-						self.table_widget.setItem(row, 9, QTableWidgetItem("$"+str("{:,.2f}".format((tax_res * 0.999)-float(user_data["buy"][row])*float(user_data["shares"][row])))))
+						self.table_widget.setItem(row, 8, QTableWidgetItem("$"+str("{:,.2f}".format((tax_res)-float(user_data["buy"][row])*float(user_data["shares"][row])))))
+						self.table_widget.setItem(row, 9, QTableWidgetItem("$"+str("{:,.2f}".format((tax_res * 0.99)-float(user_data["buy"][row])*float(user_data["shares"][row])))))
+						self.table_widget.setItem(row, 10, QTableWidgetItem("$"+str("{:,.2f}".format(tax_res * 0.99))))
 					else:
 						self.table_widget.setItem(row, 6, QTableWidgetItem("N/A"))
 				elif col == 1:

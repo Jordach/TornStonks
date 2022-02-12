@@ -129,4 +129,8 @@ dmypy.json
 .pyre/
 
 # Removal of log files
-.txt
+*2022.txt
+# Removal of distributables
+*.zip
+# Keep but don't track user_positions.conf
+user_positions.conf
