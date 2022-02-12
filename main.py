@@ -460,9 +460,9 @@ class App(QWidget):
 							self.tray_icon.showMessage("BULLRUN!", "Multiple stocks have exceeded your profit thresholds.", QIcon("tornstonks.ico"))
 
 						if buyins == 1:
-							self.tray_icon.showMessage("TENDIES!", ybuy["name"] + " has exceeded your buy in threshold.", QIcon("tornstonks.ico"))
+							self.tray_icon.showMessage("SOLD SHORT!", ybuy["name"] + " has exceeded your buy in threshold.", QIcon("tornstonks.ico"))
 						elif buyins > 1:
-							self.tray_icon.showMessage("BULLISH!", "Multiple stocks have exceeded your buy in threshold.", QIcon("tornstonks.ico"))
+							self.tray_icon.showMessage("FIRESALE!", "Multiple stocks have exceeded your buy in threshold.", QIcon("tornstonks.ico"))
 
 						if losses == 1:
 							self.tray_icon.showMessage("BEARISH!", yloss["name"] + " has exceeded your loss threshold.", QIcon("tornnotstonks.ico"))
