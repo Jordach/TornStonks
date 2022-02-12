@@ -455,19 +455,19 @@ class App(QWidget):
 						# This is a dirty hack, shave a few seconds off so it hopefully runs just before the incoming stock refresh
 						schedule.every((60 * self.enable_notify_in_mins) - 10).seconds.do(self.unmute_notifier)
 						if gains == 1:
-							self.tray_icon.showMessage("STONKS!", ygain["name"] + " has exceeded your profit threshold.", QIcon("tornstonks.ico"))
+							self.tray_icon.showMessage("TENDIES!", ygain["name"] + " has exceeded your profit threshold.", QIcon("tornstonks.ico"))
 						elif gains > 1:
-							self.tray_icon.showMessage("STONKS!", "Multiple stocks have exceeded your profit thresholds.", QIcon("tornstonks.ico"))
+							self.tray_icon.showMessage("BULLRUN!", "Multiple stocks have exceeded your profit thresholds.", QIcon("tornstonks.ico"))
 
 						if buyins == 1:
-							self.tray_icon.showMessage("STONKS!", ybuy["name"] + " has exceeded your buy in threshold.", QIcon("tornstonks.ico"))
+							self.tray_icon.showMessage("TENDIES!", ybuy["name"] + " has exceeded your buy in threshold.", QIcon("tornstonks.ico"))
 						elif buyins > 1:
-							self.tray_icon.showMessage("STONKS!", "Multiple stocks have exceeded your buy in threshold.", QIcon("tornstonks.ico"))
+							self.tray_icon.showMessage("BULLISH!", "Multiple stocks have exceeded your buy in threshold.", QIcon("tornstonks.ico"))
 
 						if losses == 1:
-							self.tray_icon.showMessage("NOT STONKS!", yloss["name"] + " has exceeded your loss threshold.", QIcon("tornnotstonks.ico"))
+							self.tray_icon.showMessage("BEARISH!", yloss["name"] + " has exceeded your loss threshold.", QIcon("tornnotstonks.ico"))
 						elif losses > 1:
-							self.tray_icon.showMessage("NOT STONKS!", "Multiple stocks have exceeded your loss thresholds.", QIcon("tornnotstonks.ico"))
+							self.tray_icon.showMessage("DAMMIT BOBO!", "Multiple stocks have exceeded your loss thresholds.", QIcon("tornnotstonks.ico"))
 		self.table_widget.setVerticalHeaderLabels(row_headers)
 		# Resize window on first launch
 		if not pyqt_init:
