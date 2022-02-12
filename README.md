@@ -118,3 +118,16 @@ ___
 	* API keys are a very private thing that can leak your battle stats or stock positions for mugging purposes.
 * Actual buttons to the main window rather than a minimalist interface?
 	* This is to facilitate adding and removing rows from TornStonks.
+___
+# Script Dependancies:
+
+```
+pip3 install PyQt5 PyQt5-Qt5 PyQt5-sip requests schedule
+```
+
+# Creating a Windows Executable:
+
+```
+pip3 install pyinstaller
+pyinstaller --onefile --windowed main.py --icon="tornstonks.ico"
+```
