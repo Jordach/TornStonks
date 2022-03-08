@@ -35,7 +35,7 @@ tornsy_data = requests.get(tornsy_api_address)
 json_data = ""
 current_day = ""
 app_name = "TornStonks"
-ver_info = "0.1"
+ver_info = "0.1.2"
 
 def update_date():
 	today = date.today()
@@ -419,7 +419,7 @@ class App(QWidget):
 							self.table_widget.setItem(y, 1, QTableWidgetItem(str(user_data["shares"][y])))
 							self.table_widget.setItem(y, 2, QTableWidgetItem(str(user_data["gain"][y])))
 							self.table_widget.setItem(y, 3, QTableWidgetItem(str(user_data["loss"][y])))
-							self.table_widget.setItem(y, 7, QTableWidgetItem("$"+str("{:,.2f}".format(float(user_data["shares"][y]) * float(user_data["buy"][y])))))
+							self.table_widget.setItem(y, 7, QTableWidgetItem("$"+str("{:,}".format(math.floor(float(user_data["shares"][y]) * float(user_data["buy"][y]))))))
 						if float(user_data["buy"][y]) > 0:
 							bought_for = float(user_data["buy"][y])
 							curr_price = float(item["price"])
@@ -519,7 +519,7 @@ class App(QWidget):
 						curr_price = float(price.replace("$", ""))
 						perc = ((curr_price - bought_for) / bought_for) * 100
 						self.table_widget.setItem(row, 6, QTableWidgetItem(str("{:.2f}".format(perc)) + "%"))
-						self.table_widget.setItem(row, 7, QTableWidgetItem("$"+str("{:,.2f}".format(float(user_data["shares"][row]) * float(user_data["buy"][row])))))
+						self.table_widget.setItem(row, 7, QTableWidgetItem("$"+str("{:,}".format(math.floor(float(user_data["shares"][row]) * float(user_data["buy"][row]))))))
 						tax_res = float(user_data["shares"][row]) * curr_price
 						self.table_widget.setItem(row, 8, QTableWidgetItem("$"+str("{:,}".format(math.floor(tax_res-float(user_data["buy"][row])*float(user_data["shares"][row]))))))
 						self.table_widget.setItem(row, 9, QTableWidgetItem("$"+str("{:,}".format(math.floor(tax_res-(tax_res * 0.999))))))
