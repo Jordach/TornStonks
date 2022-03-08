@@ -6,6 +6,7 @@ import time
 import threading
 import pprint
 import csv
+import math
 
 from datetime import datetime, date
 from PyQt5 import QtWidgets
@@ -105,7 +106,8 @@ def get_latest_stocks():
 			App.update_table(ex, False)
 		#print("Successfully updated stocks from Tornsy")
 	else:
-		raise ValueError("Server returned error code that was not OK 200.")
+		write_notification_to_log("[WARNING] Server returned error code: " + tornsy_data.status_code)
+		App.failed_stock_update(ex)
 
 # Get initial data
 get_latest_stocks()
@@ -124,14 +126,14 @@ class App(QWidget):
 		self.left = 0
 		self.top = 0
 		self.width = 800
-		self.height = 1020
+		self.height = 200
 		self.setWindowIcon(QIcon("tornstonks.ico"))
 		self.update_timer = QTimer(self)
 		self.update_timer.timeout.connect(self.table_update)
 		self.update_timer.start(1000)
-		self.save_timer = QTimer(self)
-		self.save_timer.timeout.connect(self.save_data)
-		self.save_timer.start(60000)
+		#self.save_timer = QTimer(self)
+		#self.save_timer.timeout.connect(self.save_data)
+		#self.save_timer.start(60000)
 		self.tray_icon = QSystemTrayIcon(self)
 		self.statusBar = QStatusBar()
 		self.tray_icon.setIcon(QIcon("tornstonks.ico"))
@@ -238,6 +240,9 @@ class App(QWidget):
 		self.reload_user_stocks = QAction("Reload User Stock Positions")
 		self.reload_user_stocks.triggered.connect(self.reload_user_data)
 		self.tray_menu.addAction(self.reload_user_stocks)
+		self.save_user_stocks = QAction("Save User Stock Positions")
+		self.save_user_stocks.triggered.connect(self.save_data)
+		self.tray_menu.addAction(self.save_user_stocks)
 		self.tray_menu.addSeparator()
 
 		# Window Configuration
@@ -376,13 +381,14 @@ class App(QWidget):
 			"30m Ago",                  #5
 			"Gain/Loss %",              #6
 			"Purchase Total",           #7
-			"Pre Tax Gain/Loss",        #8
-			"Taxed Gain/Loss",          #9
+			"Total Gain/Loss",          #8
+			"Taxes Incurred",           #9
 			"Final Sale Value w/ Tax"]  #10
 		)
 		self.table_widget.move(0,0)
 		self.table_widget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
 		self.table_widget.setUpdatesEnabled(True)
+		self.table_widget.setHorizontalScrollBarPolicy(1)
 		self.update_table(True)
 
 	def update_table(self, update_user_data):
@@ -444,9 +450,9 @@ class App(QWidget):
 						self.table_widget.setItem(y, 4, QTableWidgetItem("$"+str(item["price"])))
 						self.table_widget.setItem(y, 5, QTableWidgetItem("$"+str(item["interval"]["m30"]["price"])))
 						tax_res = float(user_data["shares"][y]) * float(item["price"])
-						self.table_widget.setItem(y, 8, QTableWidgetItem("$"+str("{:,.2f}".format((tax_res)-float(user_data["buy"][y])*float(user_data["shares"][y])))))
-						self.table_widget.setItem(y, 9, QTableWidgetItem("$"+str("{:,.2f}".format((tax_res * 0.999)-float(user_data["buy"][y])*float(user_data["shares"][y])))))
-						self.table_widget.setItem(y, 10, QTableWidgetItem("$"+str("{:,.2f}".format(tax_res * 0.999))))
+						self.table_widget.setItem(y, 8, QTableWidgetItem("$"+str("{:,}".format(math.floor(tax_res)-float(user_data["buy"][y])*float(user_data["shares"][y])))))
+						self.table_widget.setItem(y, 9, QTableWidgetItem("$"+str("{:,}".format(math.floor(tax_res-(tax_res * 0.999))))))
+						self.table_widget.setItem(y, 10, QTableWidgetItem("$"+str("{:,}".format(math.floor(tax_res * 0.999)))))
 			if not self.no_notification and y == (num_stonks - 1):
 				if self.not_recently_notified:
 					# This silences notifications when starting TornStonks
@@ -515,9 +521,9 @@ class App(QWidget):
 						self.table_widget.setItem(row, 6, QTableWidgetItem(str("{:.2f}".format(perc)) + "%"))
 						self.table_widget.setItem(row, 7, QTableWidgetItem("$"+str("{:,.2f}".format(float(user_data["shares"][row]) * float(user_data["buy"][row])))))
 						tax_res = float(user_data["shares"][row]) * curr_price
-						self.table_widget.setItem(row, 8, QTableWidgetItem("$"+str("{:,.2f}".format((tax_res)-float(user_data["buy"][row])*float(user_data["shares"][row])))))
-						self.table_widget.setItem(row, 9, QTableWidgetItem("$"+str("{:,.2f}".format((tax_res * 0.99)-float(user_data["buy"][row])*float(user_data["shares"][row])))))
-						self.table_widget.setItem(row, 10, QTableWidgetItem("$"+str("{:,.2f}".format(tax_res * 0.99))))
+						self.table_widget.setItem(row, 8, QTableWidgetItem("$"+str("{:,}".format(math.floor(tax_res-float(user_data["buy"][row])*float(user_data["shares"][row]))))))
+						self.table_widget.setItem(row, 9, QTableWidgetItem("$"+str("{:,}".format(math.floor(tax_res-(tax_res * 0.999))))))
+						self.table_widget.setItem(row, 10, QTableWidgetItem("$"+str("{:,}".format(math.floor(tax_res * 0.999)))))
 					else:
 						self.table_widget.setItem(row, 6, QTableWidgetItem("N/A"))
 				elif col == 1:
@@ -535,6 +541,9 @@ class App(QWidget):
 	@pyqtSlot()
 	def save_data(self):
 		save_user_data_csv()
+
+	def failed_stock_update(self):
+		self.tray_icon.showMessage("WARNING", "TornStonks failed to update from the Tornsy API, are you connected to the internet?", QIcon("tornnotstonks.ico"))
 
 def stop_app():
 	stop_run_continuously.set()

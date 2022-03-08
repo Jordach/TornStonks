@@ -65,6 +65,10 @@ This slideout menu will contain options to enable how long TornStonks stays sile
 
 This option reloads `user_positions.conf` which is included with this repo or binary version. This will reload all stocks "purchased" stored within it. Note: Stocks are considered "purchased" as in, you can use two instances of this tool to play a paper version of the market with wacky values, alongside the real stocks. **This option exists for people who prefer editing their stock data via an external editor.**
 
+* Save User Stock Positions
+
+This option replaces the automatic saving system, automatic saving is likely to return in some capacity in the near future.
+
 * Enable / Disable Automatic Window Resizing
 
 This option forces the window to match the spreadsheet view. This does not respect screen size. By default TornStocks only resizes to the content once on start up and is then disabled.
